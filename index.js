@@ -7,11 +7,17 @@ const bearerToken = require('express-bearer-token');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const { transportAwait } = require('./helper/nodemailer');
+const passport = require('passport');
+const session = require('express-session');
 
 app.use(cors());
 app.use(bearerToken());
 app.use(bodyParser());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('public'));
+app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized:true}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req,res) => {
     res.status(200).send(`<h1>HI SIMP!</h1>`);
@@ -58,8 +64,10 @@ app.post('/send-mail', async (req,res) => {
 
 const {
     authRouter,
+    postRouter,
 } = require('./router');
 
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
 
 app.listen(port, () => console.log(`API active at port ${port}`));

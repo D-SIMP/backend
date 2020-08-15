@@ -8,7 +8,7 @@ module.exports = {
         let get = `SELECT * FROM users`;
         db.query(get, (err,result) => {
             if (err) {
-                return res.status(500).send(err.message);
+                res.status(500).send(err.message);
             }
             res.status(200).send({
                 status: `Success`,
@@ -19,7 +19,7 @@ module.exports = {
     },
     Register: (req,res) => {
         let { username, password, email } = req.body;
-        let register = `INSERT INTO users (username, password, email) values ('${username}', '${hash(password)}', '${email}')`;
+        let register = `INSERT INTO users (username, password, email) VALUES ('${username}', '${hash(password)}', '${email}')`;
         db.query(register, (err,insert) => {
             if (err) {
                 res.status(500).send(err.message);
@@ -85,8 +85,8 @@ module.exports = {
     },
     KeepLogin: async (req,res) => {
         let { id } = req.user;
-        let sql = `SELECT * FROM users WHERE userid = ${id}`;
-        let response = await query(sql);
+        let user = `SELECT * FROM users WHERE userid = ${id}`;
+        let response = await query(user);
         let token = createJWTToken({...response[0]});
         res.status(200).send({
             status : 'Success',
@@ -134,8 +134,8 @@ module.exports = {
                 let token = createJWTToken({...results[0]});
                 res.status(200).send({
                     status: 'Edited',
-                    message: 'Edit Successful',
                     token,
+                    message: 'Edit Successful',
                 });
             } else {
                 return res.status(404).send({
