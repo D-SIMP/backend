@@ -17,7 +17,7 @@ module.exports = {
             });
         });
     },
-    postsById: (req,res) => {
+    postsTab: (req,res) => {
         let { id } = req.params;
         let get = `SELECT * FROM posts WHERE author = ${id}`;
         db.query(get, (err,result) => {
@@ -28,6 +28,20 @@ module.exports = {
                 status: `Success`,
                 data: result,
                 message: `Posts fetched`,
+            });
+        });
+    },
+    postPerId: (req,res) => {
+        let { author, postid } = req.params;
+        let get = `SELECT * FROM posts WHERE author = ${author} AND postid = ${postid}`;
+        db.query(get, (err,results) => {
+            if (err) {
+                res.status(500).send(err.message);
+            }
+            res.status(200).send({
+                status: `Success`,
+                data: results,
+                message: `Fetch Successful`,
             });
         });
     },
@@ -43,8 +57,9 @@ module.exports = {
                 let { caption } = req.body;
                 let { image } = req.files;
                 const imagePath = image ? `${path}/${image[0].filename}` : null;
-                let time = moment().format('YYYY-MM-DD HH:mm:ss');
-                let uploadQuery = `INSERT INTO posts (caption, createdAt, author, imageURL) VALUES ('${caption}', '${time}', '${id}', '${imagePath}')`;
+                let time = moment().format('LT');
+                let created = moment().startOf(`${time}`).fromNow();
+                let uploadQuery = `INSERT INTO posts (caption, createdAt, author, imageURL) VALUES ('${caption}', '${created}', '${id}', '${imagePath}')`;
                 db.query(uploadQuery, (err,results) => {
                     if (err) {
                         fs.unlinkSync(`./public${imagePath}`);
@@ -63,8 +78,8 @@ module.exports = {
         }
     },
     editPost: (req,res) => {
-        let { id } = req.params;
-        let select = `SELECT * FROM posts WHERE postid = ${id}`;
+        let { author, postid } = req.params;
+        let select = `SELECT * FROM posts WHERE author = ${author} AND postid = ${postid}`;
         db.query(select, (err,results) => {
             if (err) {
                 res.status(500).send(err.message);
@@ -116,7 +131,7 @@ module.exports = {
         });
     },
     clearPosts: (req,res) => {
-        let truncate = `TRUNCATE posts`;
+        let truncate = `TRUNCATE TABLE posts`;
         db.query(truncate, (err,results) => {
             if (err) {
                 res.status(500).send(err.message);

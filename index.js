@@ -65,9 +65,11 @@ app.post('/send-mail', async (req,res) => {
 const {
     authRouter,
     postRouter,
+    followRouter,
 } = require('./router');
 
 app.use('/auth', authRouter);
 app.use('/post', postRouter);
+app.use('/follow', followRouter);
 
 app.listen(port, () => console.log(`API active at port ${port}`));

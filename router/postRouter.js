@@ -4,7 +4,8 @@ const { postController } = require('../controller');
 
 const {
     allPosts,
-    postsById,
+    postsTab,
+    postPerId,
     uploadPost,
     editPost,
     deletePost,
@@ -12,10 +13,11 @@ const {
 } = postController;
 
 router.get('/all', allPosts);
-router.get('/user/:id', postsById);
+router.get('/user-tab/:id', postsTab);
+router.get('/user/:author/:postid', postPerId);
 router.post('/upload/:id', uploadPost);
-router.patch('/edit/:id', editPost);
-router.delete('/delete/:id', deletePost);
-router.delete('/clear', clearPosts);
+router.post('/edit/:author/:postid', editPost);
+router.post('/delete/:id', deletePost);
+router.post('/clear', clearPosts);
 
 module.exports = router;
